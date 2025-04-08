@@ -112,6 +112,39 @@ git clone https://github.com/yourusername/UART.git
   - **Design for Reliability:**  
     The integration of these data points underlines the design’s focus on reliability and error tolerance, which is crucial for industrial or RISC-V-based applications.
 
+- **Performance and Throughput:**
+  - **Effective Data Throughput:** With a frame consisting of 1 start bit, 32 data bits, 1 parity bit, and 1 stop bit (total 35 bits), the effective data throughput is approximately:  
+    \[
+    \text{Effective Throughput} = 115200 \times \frac{32}{35} \approx 105,000 \text{ bits per second}
+    \]
+    This calculation shows how efficient the design is when transmitting larger data words compared to a standard 8-bit UART.
+  - **Baud Tick Generation:** The calculated baud divider using a 32 MHz clock and a 115200 bps baud rate is approximately 278, ensuring the bit period is close to the desired timing with minimal error.
+
+- **Parameterization and Scalability:**
+  - **Configurable Parameters:** The design is fully parameterized, making it easy to adjust the data width, clock frequency, and baud rate. This allows the UART to be adapted for various applications beyond SERV RISC-V.
+  - **Modularity:** The clear separation into submodules (baud rate generator, transmitter, receiver, parity generator) enables reuse in different projects and simplifies debugging and future enhancements.
+
+- **FSM Efficiency and Sampling Accuracy:**
+  - **Finite State Machines:** Both the transmitter and receiver employ efficient state machines with minimal state counts (e.g., IDLE, START, DATA, PARITY, STOP), ensuring a robust yet simple control mechanism.
+  - **Mid-Bit Sampling:** The receiver uses a half-bit delay to center the sampling point on each bit, which enhances resilience against clock mismatches and asynchronous noise—a critical factor in reliable serial communication.
+
+- **Error Detection and Robustness:**
+  - **Parity and Framing Checks:** The receiver provides dedicated error flags (`parity_error` and `framing_error`) that are asserted if any discrepancy is observed in the parity computation or if the stop bit is not detected as high. This built-in error detection is crucial for mission-critical and industrial applications.
+  - **Testbench Validation:** Extensive simulation with diverse test vectors (such as all zeros, all ones, alternating patterns, and mixed values) confirms that the design correctly identifies both normal and erroneous conditions.
+
+- **Resource Utilization:**
+  - **Optimized for Low Resource Consumption:** The design’s modular architecture and efficient FSM implementation are crafted to use minimal FPGA resources (logic slices, flip-flops), making it suitable for integration in resource-constrained environments or embedded systems.
+  - **Scalability for Complex Systems:** Although designed for 32-bit data, the parameterization ensures that the architecture can be easily scaled for wider data paths or additional error-checking features if needed.
+
+- **Integration and Future Enhancements:**
+  - **Ease of Integration:** With a clear top-level module (`uart_full_duplex_32bit.v`) that encapsulates all UART functionality, the design is easy to integrate into larger systems such as the SERV RISC-V environment.
+  - **Extendibility:** The design framework allows for future additions, such as configurable stop bits, support for multi-buffering, or more advanced error correction strategies, based on application needs.
+  - **Comparative Advantage:** Compared with traditional 8-bit UART designs, the 32-bit approach reduces per-word overhead and enhances data throughput for applications that require larger data transactions.
+
+- **Verification and Community Feedback:**
+  - **Comprehensive Testbench:** The self-checking testbench not only validates functionality but also demonstrates the design under various operating conditions—serving as a template for user-driven testing in their specific setups.
+  - **Encouragement for Contributions:** The repository welcomes community feedback, suggestions for improvements, and contributions to further enhance reliability, performance, and feature sets.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
