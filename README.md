@@ -78,6 +78,40 @@ git clone https://github.com/yourusername/UART.git
 - **Configuration:**  
   Configure the parity mode with the `parity_even_n` signal (0 for even parity, 1 for odd parity). The baud rate and clock frequency are defined by the parameters in the design (32 MHz and 115200 bps by default).
 
+## Key Data Points and Design Insights
+
+- **Block Diagram Insights:**
+  - **Modular Architecture:**  
+    The design is clearly divided into distinct blocks, including a baud rate generator, transmitter, and receiver. These blocks operate collaboratively to implement the full-duplex UART.
+  - **Full-Duplex Operation:**  
+    Separate TX and RX paths are identified, enabling simultaneous transmission and reception of data.
+  - **Frame Structure:**  
+    The transmitter’s FSM is designed to send a start bit, followed by 32 data bits (LSB-first), a configurable parity bit (even/odd), and finally, a stop bit.
+
+- **RTL Schematic Observations:**
+  - **Clear Module Interconnection:**  
+    The RTL schematic illustrates proper interconnection of the FSM, shift registers, and counters, confirming that the design is both modular and structured.
+  - **Timing and Synchronization:**  
+    The schematic confirms that the baud rate generator is used to derive the required bit-timing, and the receiver samples the data in the middle of each bit period. The design uses a half-bit delay at the start to center the sampling window.
+  - **Parameterization for Scalability:**  
+    The use of parameters for data width, clock frequency, and baud rate (e.g., 32 MHz clock and 115200 bps) makes the design adaptable to similar applications, such as integration with the SERV RISC-V processor.
+
+- **Simulation Waveform Highlights:**
+  - **Correct Frame Generation:**  
+    Simulation waveforms verify that each transmitted frame includes a precise start bit, all 32 data bits in the correct order, the appropriate parity bit, and a stop bit.
+  - **Error Detection Validation:**  
+    The waveforms demonstrate that parity and stop bit checks function as expected—error flags (parity_error and framing_error) are asserted only under fault conditions.
+  - **Seamless Full-Duplex Operation:**  
+    The simulation confirms that simultaneous transmission and reception occur without interference, proving the efficacy of the separate TX and RX paths.
+
+- **Additional Diagram Insights:**
+  - **Sampling Technique:**  
+    Detailed diagrams highlight the design decision to use mid-bit sampling, achieved by introducing a half-bit delay for the start bit, thereby improving robustness in asynchronous operation.
+  - **Error Handling:**  
+    The analysis confirms that error detection (for both parity and framing errors) is an integral part of the design, with dedicated circuitry ensuring any transmission anomalies are flagged.
+  - **Design for Reliability:**  
+    The integration of these data points underlines the design’s focus on reliability and error tolerance, which is crucial for industrial or RISC-V-based applications.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
